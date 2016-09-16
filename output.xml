@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20160916 10:21:03.805" generator="Robot 3.0 (Python 2.7.11 on darwin)">
+<suite source="/Users/isseu/workspace/Wunderlist-RobotFramework/init.robot" id="s1" name="Init">
+<test id="s1-t1" name="Valid Login">
+<kw name="Open Browser To Login Page">
+<msg timestamp="20160916 10:21:03.832" level="FAIL">No keyword with name 'Open Browser To Login Page' found.</msg>
+<status status="FAIL" endtime="20160916 10:21:03.832" starttime="20160916 10:21:03.832"></status>
+</kw>
+<kw type="teardown" name="Close Browser">
+<msg timestamp="20160916 10:21:03.835" level="FAIL">No keyword with name 'Close Browser' found.</msg>
+<status status="FAIL" endtime="20160916 10:21:03.835" starttime="20160916 10:21:03.835">No keyword with name 'Close Browser' found.</status>
+</kw>
+<status status="FAIL" endtime="20160916 10:21:03.835" critical="yes" starttime="20160916 10:21:03.829">No keyword with name 'Open Browser To Login Page' found.
+
+Also teardown failed:
+No keyword with name 'Close Browser' found.</status>
+</test>
+<doc>A test suite with a single test for valid login.</doc>
+<status status="FAIL" endtime="20160916 10:21:03.836" starttime="20160916 10:21:03.809"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="0">Critical Tests</stat>
+<stat fail="1" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" id="s1" name="Init" pass="0">Init</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
