@@ -139,3 +139,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+log.html
+output.xml
+report.html
