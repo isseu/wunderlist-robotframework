@@ -40,8 +40,8 @@ Get Current User Info
 #############
 Post New Task
   Create Wunderlist Session
-  ${id_task}=    Get Any User List
-  &{params}=    Create Dictionary    list_id=${id_task}    title=Testing Task
+  ${id_list}   ${revision}     Get Any User List
+  &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
   ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
   Should Be Equal As Strings    ${resp.status_code}    201
 
@@ -62,14 +62,14 @@ Create New List
 
 Get a specific List
   Create Wunderlist Session
-  ${id_list}=    Get Any User List
+  ${id_list}   ${revision}     Get Any User List
   ${link}=    Catenate  SEPARATOR=  ${API_LISTS_URL}    /    ${id_list}
   ${resp}=    Get Request    wunderlist    ${link}
   Should Be Equal As Strings    ${resp.status_code}    200
 
 Update a List
   Create Wunderlist Session
-  ${id}   ${revision}     Get Helper List
+  ${id}   ${revision}     Get Any User List
   &{params}=    Create Dictionary    revision=${revision}    title=New Title
   ${link}=    Catenate  SEPARATOR=  ${API_LISTS_URL}    /    ${id}
   ${resp}=    PATCH Request    wunderlist    ${link}    data=${params}
@@ -96,7 +96,8 @@ Get Any User List
     ${number}=    Get From List     ${number}     0
     ${result}=    Get From List    ${jsondata}    ${number}
     ${id}=    Get From Dictionary    ${result}    id
-    [Return]    ${id}
+    ${revision}=     Get From Dictionary    ${result}    revision
+    [Return]    ${id}     ${revision}
 
 Get Helper List
     Create Wunderlist Session
