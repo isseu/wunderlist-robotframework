@@ -83,15 +83,6 @@ Destroy a Given List
   ${resp}=    DELETE Request    wunderlist    ${link}     params=&{params}
   Should Be Equal As Strings    ${resp.status_code}    204
 
-Destroy all Lists
-  Create Wunderlist Session
-  ${id}   ${revision}     Get Helper List
-  :FOR    ${ELEMENT}    IN    @{ITEMS}
-    &{params}=    Create Dictionary    revision=${revision}
-    ${link}=    Catenate  SEPARATOR=  ${API_LISTS_URL}    /    ${id}
-    ${resp}=    DELETE Request    wunderlist    ${link}     params=&{params}
-    Should Be Equal As Strings    ${resp.status_code}    204
-
 *** Keywords ***
 Create Wunderlist Session
     Create Session    wunderlist    ${API_URL}    headers=&{AUTH_HEADERS}
