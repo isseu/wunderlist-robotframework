@@ -6,11 +6,15 @@ Wunderlist Robotframework
 We use [robotframework-requests](https://github.com/bulkan/robotframework-requests) for making requests.
 
 ```bash
+$ pip install virtualenv
+$ virtualenv .
 $ pip install robotframework
-$ pip install -U requests
-$ pip install -U robotframework-requests
+$ pip install requests
+$ pip install robotframework-requests
 ```
 
 ## Usage
 
-```$ robot init.robot```
+```bash
+$ bin/robot init.robot
+```
