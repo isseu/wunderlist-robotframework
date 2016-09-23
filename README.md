@@ -7,7 +7,10 @@ We use [robotframework-requests](https://github.com/bulkan/robotframework-reques
 
 ```bash
 $ pip install virtualenv
+$ git clone https://github.com/isseu/wunderlist-robotframework
+$ cd wunderlist-robotframework
 $ virtualenv .
+$ source bin/activate
 $ pip install robotframework
 $ pip install requests
 $ pip install robotframework-requests
