@@ -13,6 +13,7 @@ ${CLIENT SECRET}  d8a8da5713d2f1be0d77eb68f4fc10dfa2e09f05c1801dfb797020f4b30b
 ${API_USER_URL}   /api/v1/user
 ${API_TASKS_URL}   /api/v1/tasks
 ${API_LISTS_URL}   /api/v1/lists
+${API_MEMBERSHIPS_URL}    /api/v1/memberships
 
 # Ocupar 4 espacios siempre
 # Hay ejemplos aqui https://github.com/bulkan/robotframework-requests/blob/master/tests/testcase.txt
@@ -67,6 +68,15 @@ Get Specific Task
 
 
 #############
+### Membership ###
+#############
+
+Get User Memberships
+    Create Wunderlist Session
+    ${resp}=    Get Request    wunderlist    ${API_MEMBERSHIPS_URL}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
+#############
 ### List ###
 #############
 
@@ -111,6 +121,18 @@ Create Wunderlist Session
 Get Any User List
     Create Wunderlist Session
     ${resp}=    Get Request    wunderlist    ${API_LISTS_URL}
+    ${jsondata}=    To Json    ${resp.content}
+    ${length}=    Get Length      ${jsondata}
+    ${number}=    Evaluate    random.sample(range(1, ${length} - 1), 1)    random
+    ${number}=    Get From List     ${number}     0
+    ${result}=    Get From List    ${jsondata}    ${number}
+    ${id}=    Get From Dictionary    ${result}    id
+    ${revision}=     Get From Dictionary    ${result}    revision
+    [Return]    ${id}     ${revision}
+
+Get Any User Membership
+    Create Wunderlist Session
+    ${resp}=    Get Request    wunderlist    ${API_MEMBERSHIPS_URL}
     ${jsondata}=    To Json    ${resp.content}
     ${length}=    Get Length      ${jsondata}
     ${number}=    Evaluate    random.sample(range(1, ${length} - 1), 1)    random
