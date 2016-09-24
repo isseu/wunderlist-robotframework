@@ -18,7 +18,6 @@ ${API_LISTS_URL}   /api/v1/lists
 # Hay ejemplos aqui https://github.com/bulkan/robotframework-requests/blob/master/tests/testcase.txt
 # Librerias RobotFramework http://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Catenate
 
-
 *** Test Cases ***
 
 #############
@@ -28,7 +27,6 @@ Get Current User Info
     Create Wunderlist Session
     ${resp}=    Get Request    wunderlist    ${API_USER_URL}
     ${jsondata}=    To Json    ${resp.content}
-    Log    ${jsondata}
     Should Be Equal As Strings    ${resp.status_code}    200
     Dictionary Should Contain Key    ${jsondata}    id
     Dictionary Should Contain Key    ${jsondata}    name
@@ -38,12 +36,35 @@ Get Current User Info
 #############
 ### Tasks ###
 #############
+
 Post New Task
-  Create Wunderlist Session
-  ${id_list}   ${revision}     Get Any User List
-  &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
-  ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
-  Should Be Equal As Strings    ${resp.status_code}    201
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    201
+
+Get Tasks From List
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}
+    ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
+Get Completed Tasks From List
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    completed=true
+    ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
+Get Specific Task
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    completed=true
+    ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
 
 #############
 ### List ###
@@ -55,33 +76,33 @@ Get User Lists
     Should Be Equal As Strings    ${resp.status_code}    200
 
 Create New List
-  Create Wunderlist Session
-  &{params}=    Create Dictionary    title=New List
-  ${resp}=    Post Request    wunderlist    ${API_LISTS_URL}    data=${params}
-  Should Be Equal As Strings    ${resp.status_code}    201
+    Create Wunderlist Session
+    &{params}=    Create Dictionary    title=New List
+    ${resp}=    Post Request    wunderlist    ${API_LISTS_URL}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    201
 
 Get a specific List
-  Create Wunderlist Session
-  ${id_list}   ${revision}     Get Any User List
-  ${link}=    Catenate  SEPARATOR=  ${API_LISTS_URL}    /    ${id_list}
-  ${resp}=    Get Request    wunderlist    ${link}
-  Should Be Equal As Strings    ${resp.status_code}    200
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    ${link}=    Catenate  SEPARATOR=  ${API_LISTS_URL}    /    ${id_list}
+    ${resp}=    Get Request    wunderlist    ${link}
+    Should Be Equal As Strings    ${resp.status_code}    200
 
 Update a List
-  Create Wunderlist Session
-  ${id}   ${revision}     Get Any User List
-  &{params}=    Create Dictionary    revision=${revision}    title=New Title
-  ${link}=    Catenate  SEPARATOR=  ${API_LISTS_URL}    /    ${id}
-  ${resp}=    PATCH Request    wunderlist    ${link}    data=${params}
-  Should Be Equal As Strings    ${resp.status_code}    200
+    Create Wunderlist Session
+    ${id}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    revision=${revision}    title=New Title
+    ${link}=    Catenate  SEPARATOR=  ${API_LISTS_URL}    /    ${id}
+    ${resp}=    PATCH Request    wunderlist    ${link}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    200
 
 Destroy a Given List
-  Create Wunderlist Session
-  ${id}   ${revision}     Get Helper List
-  &{params}=    Create Dictionary    revision=${revision}
-  ${link}=    Catenate  SEPARATOR=  ${API_LISTS_URL}    /    ${id}
-  ${resp}=    DELETE Request    wunderlist    ${link}     params=&{params}
-  Should Be Equal As Strings    ${resp.status_code}    204
+    Create Wunderlist Session
+    ${id}   ${revision}     Get Helper List
+    &{params}=    Create Dictionary    revision=${revision}
+    ${link}=    Catenate  SEPARATOR=  ${API_LISTS_URL}    /    ${id}
+    ${resp}=    DELETE Request    wunderlist    ${link}     params=&{params}
+    Should Be Equal As Strings    ${resp.status_code}    204
 
 *** Keywords ***
 Create Wunderlist Session
@@ -106,4 +127,4 @@ Get Helper List
     ${jsondata}=    To Json    ${resp.content}
     ${id}=    Get From Dictionary    ${jsondata}    id
     ${revision}=     Get From Dictionary    ${jsondata}    revision
-    [Return]    ${id}   ${revision}
+    [Return]    ${id}    ${revision}
