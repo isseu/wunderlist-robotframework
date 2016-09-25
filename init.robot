@@ -32,11 +32,20 @@ Get User Folders
     ${resp}=    Get Request    wunderlist    ${API_FOLDERS_URL}
     Should Be Equal As Strings    ${resp.status_code}    200
 
+# Get Specific Folder
+#   Create Wunderlist Session
+#   ${id_list}   ${revision}     Get Any User List
+#   &{params}=    Create Dictionary    list_id=${id_list}    completed=true
+#   ${resp}=    Get Request    wunderlist    ${API_FOLDERS_URL}    params=${params}
+#   Should Be Equal As Strings    ${resp.status_code}    200
+
 Create New Folder
   Create Wunderlist Session
-  &{params}=    Create Dictionary    title=New Folder
+  @list = Create List 1 2 3 4
+  &{params}=    Create Dictionary    title=New Folder list_ids=@list
   ${resp}=    Post Request    wunderlist    ${API_FOLDERS_URL}    data=${params}
   Should Be Equal As Strings    ${resp.status_code}    201
+
 
 #############
 ### Users ###
