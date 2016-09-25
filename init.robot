@@ -13,6 +13,7 @@ ${CLIENT SECRET}  d8a8da5713d2f1be0d77eb68f4fc10dfa2e09f05c1801dfb797020f4b30b
 ${API_USER_URL}   /api/v1/user
 ${API_TASKS_URL}   /api/v1/tasks
 ${API_LISTS_URL}   /api/v1/lists
+${API_FOLDERS_URL}   /api/v1/folders
 ${API_MEMBERSHIPS_URL}    /api/v1/memberships
 
 # Ocupar 4 espacios siempre
@@ -20,6 +21,22 @@ ${API_MEMBERSHIPS_URL}    /api/v1/memberships
 # Librerias RobotFramework http://robotframework.org/robotframework/latest/libraries/BuiltIn.html#Catenate
 
 *** Test Cases ***
+
+#############
+## Folders ##
+#############
+
+
+Get User Folders
+    Create Wunderlist Session
+    ${resp}=    Get Request    wunderlist    ${API_FOLDERS_URL}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
+Create New Folder
+  Create Wunderlist Session
+  &{params}=    Create Dictionary    title=New Folder
+  ${resp}=    Post Request    wunderlist    ${API_FOLDERS_URL}    data=${params}
+  Should Be Equal As Strings    ${resp.status_code}    201
 
 #############
 ### Users ###
