@@ -28,153 +28,153 @@ ${API_MEMBERSHIPS_URL}   /api/v1/memberships
 ## Folders ##
 #############
 
-# Get User Folders
-#     Create Wunderlist Session
-#     ${resp}=    Get Request    wunderlist    ${API_FOLDERS_URL}
-#     Should Be Equal As Strings    ${resp.status_code}    200
-#
-# Create New Folder
-#     Create Wunderlist Session
-#     ${number}=    Evaluate    random.sample(range(1, 2), 1)    random
-#     &{params}=    Create Dictionary    title=New Folder    list_ids=${number}
-#     ${resp}=    Post Request    wunderlist    ${API_FOLDERS_URL}    data=${params}
-#     Should Be Equal As Strings    ${resp.status_code}    201
-#     ${jsondata}=    To Json    ${resp.content}
-#     Dictionary Should Contain Key    ${jsondata}    id
-#     ${id_folder}=    Get From Dictionary    ${jsondata}    id
-#     # Should exists
-#     ${resp}=    Get Request    wunderlist    ${API_FOLDERS_URL}/${id_folder}
-#     Should Be Equal As Strings    ${resp.status_code}    200
-#     ${jsondata}=    To Json    ${resp.content}
-#     Dictionary Should Contain Key    ${jsondata}    title
-#     Dictionary Should Contain Item    ${jsondata}    title    New Folder
-#
+Get User Folders
+    Create Wunderlist Session
+    ${resp}=    Get Request    wunderlist    ${API_FOLDERS_URL}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
+Create New Folder
+    Create Wunderlist Session
+    ${number}=    Evaluate    random.sample(range(1, 2), 1)    random
+    &{params}=    Create Dictionary    title=New Folder    list_ids=${number}
+    ${resp}=    Post Request    wunderlist    ${API_FOLDERS_URL}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    201
+    ${jsondata}=    To Json    ${resp.content}
+    Dictionary Should Contain Key    ${jsondata}    id
+    ${id_folder}=    Get From Dictionary    ${jsondata}    id
+    # Should exists
+    ${resp}=    Get Request    wunderlist    ${API_FOLDERS_URL}/${id_folder}
+    Should Be Equal As Strings    ${resp.status_code}    200
+    ${jsondata}=    To Json    ${resp.content}
+    Dictionary Should Contain Key    ${jsondata}    title
+    Dictionary Should Contain Item    ${jsondata}    title    New Folder
+
 # #############
 # ### Users ###
 # #############
-# Get Current User Info
-#     Create Wunderlist Session
-#     ${resp}=    Get Request    wunderlist    ${API_USER_URL}
-#     ${jsondata}=    To Json    ${resp.content}
-#     Should Be Equal As Strings    ${resp.status_code}    200
-#     Dictionary Should Contain Key    ${jsondata}    id
-#     Dictionary Should Contain Key    ${jsondata}    name
-#     Dictionary Should Contain Key    ${jsondata}    email
-#     Dictionary Should Contain Key    ${jsondata}    type
-#
+Get Current User Info
+    Create Wunderlist Session
+    ${resp}=    Get Request    wunderlist    ${API_USER_URL}
+    ${jsondata}=    To Json    ${resp.content}
+    Should Be Equal As Strings    ${resp.status_code}    200
+    Dictionary Should Contain Key    ${jsondata}    id
+    Dictionary Should Contain Key    ${jsondata}    name
+    Dictionary Should Contain Key    ${jsondata}    email
+    Dictionary Should Contain Key    ${jsondata}    type
+
 # #############
 # ### Tasks ###
 # #############
-#
-# Post New Task
-#     Create Wunderlist Session
-#     ${id_list}   ${revision}     Get Any User List
-#     &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
-#     ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
-#     Should Be Equal As Strings    ${resp.status_code}    201
-#
-#     ${result}=    To Json    ${resp.content}
-#     ${id_task}=    Get From Dictionary    ${result}    id
-#     ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
-#     ${resp}=    Get Request    wunderlist    ${link}
-#     Should Be Equal As Strings    ${resp.status_code}    200
-#
-# Get Tasks From List
-#     Create Wunderlist Session
-#     ${id_list}   ${revision}     Get Any User List
-#     &{params}=    Create Dictionary    list_id=${id_list}
-#     ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
-#     Should Be Equal As Strings    ${resp.status_code}    200
-#
-# Get Completed Tasks From List
-#     Create Wunderlist Session
-#     ${id_list}   ${revision}     Get Any User List
-#     &{params}=    Create Dictionary    list_id=${id_list}    completed=true
-#     ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
-#     Should Be Equal As Strings    ${resp.status_code}    200
-#
-# Get Specific Task
-#     Create Wunderlist Session
-#     ${id_list}   ${revision}     Get Any User List
-#     &{params}=    Create Dictionary    list_id=${id_list}    title=Specific Task
-#     ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
-#     ${result}=    To Json    ${resp.content}
-#     ${id_task}=    Get From Dictionary    ${result}    id
-#
-#     ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
-#     ${resp}=    Get Request    wunderlist    ${link}
-#     ${jsondata}=    To Json    ${resp.content}
-#     Dictionary Should Contain Key    ${jsondata}    id
-#     Dictionary Should Contain Key    ${jsondata}    list_id
-#     Dictionary Should Contain Key    ${jsondata}    revision
-#     Dictionary Should Contain Key    ${jsondata}    title
-#
-#
-# Update a task
-#     Create Wunderlist Session
-#     ${id_list}   ${revision}     Get Any User List
-#     &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
-#     ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
-#     ${result}=    To Json    ${resp.content}
-#     ${id_task}=    Get From Dictionary    ${result}    id
-#     ${revision}=     Get From Dictionary    ${result}    revision
-#
-#     &{params}=    Create Dictionary    revision=${revision}    title=Updating a Task
-#     ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
-#     ${resp}=    PATCH Request    wunderlist    ${link}    data=${params}
-#     Should Be Equal As Strings    ${resp.status_code}    200
-#
-#     ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
-#     ${resp}=    Get Request    wunderlist    ${link}
-#     ${result}=    To Json    ${resp.content}
-#     ${new_title}=   Get From Dictionary    ${result}    title
-#     Should Be Equal As Strings    ${new_title}    Updating a Task
-#
-# Delete a task
-#     Create Wunderlist Session
-#     ${id_list}   ${revision}     Get Any User List
-#     &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
-#     ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
-#
-#     ${result}=    To Json    ${resp.content}
-#     ${id_task}=    Get From Dictionary    ${result}    id
-#     ${revision}=     Get From Dictionary    ${result}    revision
-#
-#     &{params}=    Create Dictionary    revision=${revision}
-#     ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
-#     ${resp}=    DELETE Request    wunderlist    ${link}     params=&{params}
-#     Should Be Equal As Strings    ${resp.status_code}    204
-#
-#     # Should be Deleted
-#     ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
-#     ${resp}=    Get Request    wunderlist    ${link}
-#     Should Be Equal As Strings    ${resp.status_code}    404
-#
-#
+
+Post New Task
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    201
+
+    ${result}=    To Json    ${resp.content}
+    ${id_task}=    Get From Dictionary    ${result}    id
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    Get Request    wunderlist    ${link}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
+Get Tasks From List
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}
+    ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
+Get Completed Tasks From List
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    completed=true
+    ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
+Get Specific Task
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Specific Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    ${result}=    To Json    ${resp.content}
+    ${id_task}=    Get From Dictionary    ${result}    id
+
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    Get Request    wunderlist    ${link}
+    ${jsondata}=    To Json    ${resp.content}
+    Dictionary Should Contain Key    ${jsondata}    id
+    Dictionary Should Contain Key    ${jsondata}    list_id
+    Dictionary Should Contain Key    ${jsondata}    revision
+    Dictionary Should Contain Key    ${jsondata}    title
+
+
+Update a task
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    ${result}=    To Json    ${resp.content}
+    ${id_task}=    Get From Dictionary    ${result}    id
+    ${revision}=     Get From Dictionary    ${result}    revision
+
+    &{params}=    Create Dictionary    revision=${revision}    title=Updating a Task
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    PATCH Request    wunderlist    ${link}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    Get Request    wunderlist    ${link}
+    ${result}=    To Json    ${resp.content}
+    ${new_title}=   Get From Dictionary    ${result}    title
+    Should Be Equal As Strings    ${new_title}    Updating a Task
+
+Delete a task
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+
+    ${result}=    To Json    ${resp.content}
+    ${id_task}=    Get From Dictionary    ${result}    id
+    ${revision}=     Get From Dictionary    ${result}    revision
+
+    &{params}=    Create Dictionary    revision=${revision}
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    DELETE Request    wunderlist    ${link}     params=&{params}
+    Should Be Equal As Strings    ${resp.status_code}    204
+
+    # Should be Deleted
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    Get Request    wunderlist    ${link}
+    Should Be Equal As Strings    ${resp.status_code}    404
+
+
 # #############
 # ###Comments##
 # #############
-#
-# Create Comment on task
-#     Create Wunderlist Session
-#     ${id_list}   ${revision}     Get Any User List
-#     &{params}=    Create Dictionary    list_id=${id_list}    title=Creating Comment Task
-#     ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
-#     ${jsondata}=    To Json    ${resp.content}
-#     ${id_task}=    Get From Dictionary    ${jsondata}    id
-#
-#     &{params}=    Create Dictionary    task_id=${id_task}    text=First Comment
-#     ${resp}=    Post Request    wunderlist    ${API_TASKS_COMMENTS}    data=${params}
-#     Should Be Equal As Strings    ${resp.status_code}    201
-#
+
+Create Comment on task
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Creating Comment Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    ${jsondata}=    To Json    ${resp.content}
+    ${id_task}=    Get From Dictionary    ${jsondata}    id
+
+    &{params}=    Create Dictionary    task_id=${id_task}    text=First Comment
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_COMMENTS}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    201
+
 # #############
 # ### Membership ###
 # #############
-#
-# Get User Memberships
-#     Create Wunderlist Session
-#     ${resp}=    Get Request    wunderlist    ${API_MEMBERSHIPS_URL}
-#     Should Be Equal As Strings    ${resp.status_code}    200
+
+Get User Memberships
+    Create Wunderlist Session
+    ${resp}=    Get Request    wunderlist    ${API_MEMBERSHIPS_URL}
+    Should Be Equal As Strings    ${resp.status_code}    200
 
 #############
 ### List ###
@@ -240,7 +240,7 @@ Get Notes List
   &{params}=    Create Dictionary    list_id=${id_list}    type=1
   ${resp}=    Get Request    wunderlist    ${API_NOTES_URL}    params=${params}
   Should Be Equal As Strings    ${resp.status_code}    200
-  
+
 *** Keywords ***
 Create Wunderlist Session
     Create Session    wunderlist    ${API_URL}    headers=&{AUTH_HEADERS}
