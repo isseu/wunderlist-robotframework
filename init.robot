@@ -69,7 +69,7 @@ Get Current User Info
 
 Post New Task
     Create Wunderlist Session
-    ${id_list}   ${revision}     Get Any User List
+    ${id_list}    ${revision}     Get Any User List
     &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
     ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
     Should Be Equal As Strings    ${resp.status_code}    201
@@ -82,21 +82,21 @@ Post New Task
 
 Get Tasks From List
     Create Wunderlist Session
-    ${id_list}   ${revision}     Get Any User List
+    ${id_list}    ${revision}     Get Any User List
     &{params}=    Create Dictionary    list_id=${id_list}
     ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
     Should Be Equal As Strings    ${resp.status_code}    200
 
 Get Completed Tasks From List
     Create Wunderlist Session
-    ${id_list}   ${revision}     Get Any User List
+    ${id_list}    ${revision}     Get Any User List
     &{params}=    Create Dictionary    list_id=${id_list}    completed=true
     ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
     Should Be Equal As Strings    ${resp.status_code}    200
 
 Get Specific Task
     Create Wunderlist Session
-    ${id_list}   ${revision}     Get Any User List
+    ${id_list}    ${revision}     Get Any User List
     &{params}=    Create Dictionary    list_id=${id_list}    title=Specific Task
     ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
     ${result}=    To Json    ${resp.content}
@@ -113,7 +113,7 @@ Get Specific Task
 
 Update a task
     Create Wunderlist Session
-    ${id_list}   ${revision}     Get Any User List
+    ${id_list}    ${revision}     Get Any User List
     &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
     ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
     ${result}=    To Json    ${resp.content}
@@ -133,7 +133,7 @@ Update a task
 
 Delete a task
     Create Wunderlist Session
-    ${id_list}   ${revision}     Get Any User List
+    ${id_list}    ${revision}     Get Any User List
     &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
     ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
 
@@ -158,7 +158,7 @@ Delete a task
 
 Create Comment on task
     Create Wunderlist Session
-    ${id_list}   ${revision}     Get Any User List
+    ${id_list}    ${revision}     Get Any User List
     &{params}=    Create Dictionary    list_id=${id_list}    title=Creating Comment Task
     ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
     ${jsondata}=    To Json    ${resp.content}
@@ -203,7 +203,7 @@ Create New List
 
 Get a specific List
     Create Wunderlist Session
-    ${id_list}   ${revision}     Get Any User List
+    ${id_list}    ${revision}     Get Any User List
     ${resp}=    Get Request    wunderlist    ${API_LISTS_URL}/${id_list}
     Should Be Equal As Strings    ${resp.status_code}    200
     ${jsondata}=    To Json    ${resp.content}
@@ -215,7 +215,7 @@ Get a specific List
 
 Update a List
     Create Wunderlist Session
-    ${id}   ${revision}     Get Any User List
+    ${id}    ${revision}     Get Any User List
     ${title}=     Generate Random String
     &{params}=    Create Dictionary    revision=${revision}    title=${title}
     ${resp}=    PATCH Request    wunderlist    ${API_LISTS_URL}/${id}    data=${params}
@@ -227,11 +227,12 @@ Update a List
 
 Destroy a Given List
     Create Wunderlist Session
-    ${id}   ${revision}     Get Helper List
+    ${id}    ${revision}     Get Helper List
     &{params}=    Create Dictionary    revision=${revision}
-    ${link}=    Catenate  SEPARATOR=  ${API_LISTS_URL}    /    ${id}
-    ${resp}=    DELETE Request    wunderlist    ${link}     params=&{params}
+    ${resp}=    DELETE Request    wunderlist    ${API_LISTS_URL}/${id}     params=&{params}
     Should Be Equal As Strings    ${resp.status_code}    204
+    ${resp}=    Get Request    wunderlist    ${API_LISTS_URL}/${id}
+    Should Be Equal As Strings    ${resp.status_code}    404
 
 #############
 ### Notes ###
