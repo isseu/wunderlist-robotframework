@@ -212,7 +212,16 @@ Destroy a Given List
     ${link}=    Catenate  SEPARATOR=  ${API_LISTS_URL}    /    ${id}
     ${resp}=    DELETE Request    wunderlist    ${link}     params=&{params}
     Should Be Equal As Strings    ${resp.status_code}    204
-
+#############
+### Notes ###
+############
+Get Notes List
+  Create Wunderlist Session
+  ${id_list}   ${revision}     Get Any User List
+  &{params}=    Create Dictionary    list_id=${id_list}    type=1
+  ${resp}=    Get Request    wunderlist    ${API_NOTES_URL}    params=${params}
+  Should Be Equal As Strings    ${resp.status_code}    200
+  
 *** Keywords ***
 Create Wunderlist Session
     Create Session    wunderlist    ${API_URL}    headers=&{AUTH_HEADERS}
