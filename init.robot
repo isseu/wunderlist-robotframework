@@ -72,6 +72,12 @@ Post New Task
     ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
     Should Be Equal As Strings    ${resp.status_code}    201
 
+    ${result}=    To Json    ${resp.content}
+    ${id_task}=    Get From Dictionary    ${result}    id
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    Get Request    wunderlist    ${link}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
 Get Tasks From List
     Create Wunderlist Session
     ${id_list}   ${revision}     Get Any User List
@@ -89,9 +95,19 @@ Get Completed Tasks From List
 Get Specific Task
     Create Wunderlist Session
     ${id_list}   ${revision}     Get Any User List
-    &{params}=    Create Dictionary    list_id=${id_list}    completed=true
-    ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
-    Should Be Equal As Strings    ${resp.status_code}    200
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Specific Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    ${result}=    To Json    ${resp.content}
+    ${id_task}=    Get From Dictionary    ${result}    id
+
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    Get Request    wunderlist    ${link}
+    ${jsondata}=    To Json    ${resp.content}
+    Dictionary Should Contain Key    ${jsondata}    id
+    Dictionary Should Contain Key    ${jsondata}    list_id
+    Dictionary Should Contain Key    ${jsondata}    revision
+    Dictionary Should Contain Key    ${jsondata}    title
+
 
 Update a task
     Create Wunderlist Session
@@ -106,6 +122,12 @@ Update a task
     ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
     ${resp}=    PATCH Request    wunderlist    ${link}    data=${params}
     Should Be Equal As Strings    ${resp.status_code}    200
+
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    Get Request    wunderlist    ${link}
+    ${result}=    To Json    ${resp.content}
+    ${new_title}=   Get From Dictionary    ${result}    title
+    Should Be Equal As Strings    ${new_title}    Updating a Task
 
 Delete a task
     Create Wunderlist Session
@@ -122,6 +144,12 @@ Delete a task
     ${resp}=    DELETE Request    wunderlist    ${link}     params=&{params}
     Should Be Equal As Strings    ${resp.status_code}    204
 
+    # Should be Deleted
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    Get Request    wunderlist    ${link}
+    Should Be Equal As Strings    ${resp.status_code}    404
+
+
 #############
 ###Comments##
 #############
@@ -137,8 +165,6 @@ Create Comment on task
     &{params}=    Create Dictionary    task_id=${id_task}    text=First Comment
     ${resp}=    Post Request    wunderlist    ${API_TASKS_COMMENTS}    data=${params}
     Should Be Equal As Strings    ${resp.status_code}    201
-
-
 
 #############
 ### Membership ###
