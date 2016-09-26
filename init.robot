@@ -10,12 +10,12 @@ ${CLIENT ID}      59faafeee266cc5fac01
 ${CLIENT SECRET}  d8a8da5713d2f1be0d77eb68f4fc10dfa2e09f05c1801dfb797020f4b30b
 &{AUTH_HEADERS}   X-Access-Token=${CLIENT SECRET}  X-Client-ID=${CLIENT ID}  Content-Type=application/json
 # Wunderlist URLs
-${API_USER_URL}   /api/v1/user
-${API_TASKS_URL}   /api/v1/tasks
-${API_TASKS_COMMENTS}     /api/v1/task_comments
-${API_LISTS_URL}   /api/v1/lists
-${API_FOLDERS_URL}   /api/v1/folders
-${API_MEMBERSHIPS_URL}    /api/v1/memberships
+${API_USER_URL}        /api/v1/user
+${API_TASKS_URL}       /api/v1/tasks
+${API_TASKS_COMMENTS}  /api/v1/task_comments
+${API_LISTS_URL}       /api/v1/lists
+${API_FOLDERS_URL}     /api/v1/folders
+${API_MEMBERSHIPS_URL} /api/v1/memberships
 
 # Ocupar 4 espacios siempre
 # Hay ejemplos aqui https://github.com/bulkan/robotframework-requests/blob/master/tests/testcase.txt
@@ -27,20 +27,26 @@ ${API_MEMBERSHIPS_URL}    /api/v1/memberships
 ## Folders ##
 #############
 
-
 Get User Folders
     Create Wunderlist Session
     ${resp}=    Get Request    wunderlist    ${API_FOLDERS_URL}
     Should Be Equal As Strings    ${resp.status_code}    200
 
-
 Create New Folder
-  Create Wunderlist Session
-  ${number}=    Evaluate    random.sample(range(1, 2), 1)    random
-  &{params}=    Create Dictionary    title=New Folder    list_ids=${number}
-  ${resp}=    Post Request    wunderlist    ${API_FOLDERS_URL}    data=${params}
-  Should Be Equal As Strings    ${resp.status_code}    201
-
+    Create Wunderlist Session
+    ${number}=    Evaluate    random.sample(range(1, 2), 1)    random
+    &{params}=    Create Dictionary    title=New Folder    list_ids=${number}
+    ${resp}=    Post Request    wunderlist    ${API_FOLDERS_URL}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    201
+    ${jsondata}=    To Json    ${resp.content}
+    Dictionary Should Contain Key    ${jsondata}    id
+    ${id_folder}=    Get From Dictionary    ${jsondata}    id
+    # Should exists
+    ${resp}=    Get Request    wunderlist    ${API_FOLDERS_URL}/${id_folder}
+    Should Be Equal As Strings    ${resp.status_code}    200
+    ${jsondata}=    To Json    ${resp.content}
+    Dictionary Should Contain Key    ${jsondata}    title
+    Dictionary Should Contain Item    ${jsondata}    title    New Folder
 
 #############
 ### Users ###
