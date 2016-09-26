@@ -12,6 +12,7 @@ ${CLIENT SECRET}  d8a8da5713d2f1be0d77eb68f4fc10dfa2e09f05c1801dfb797020f4b30b
 # Wunderlist URLs
 ${API_USER_URL}   /api/v1/user
 ${API_TASKS_URL}   /api/v1/tasks
+${API_TASKS_COMMENTS}     /api/v1/task_comments
 ${API_LISTS_URL}   /api/v1/lists
 ${API_FOLDERS_URL}   /api/v1/folders
 ${API_MEMBERSHIPS_URL}    /api/v1/memberships
@@ -85,6 +86,52 @@ Get Specific Task
     &{params}=    Create Dictionary    list_id=${id_list}    completed=true
     ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
     Should Be Equal As Strings    ${resp.status_code}    200
+
+Update a task
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    ${result}=    To Json    ${resp.content}
+    ${id_task}=    Get From Dictionary    ${result}    id
+    ${revision}=     Get From Dictionary    ${result}    revision
+
+    &{params}=    Create Dictionary    revision=${revision}    title=Updating a Task
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    PATCH Request    wunderlist    ${link}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    200
+
+Delete a task
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+
+    ${result}=    To Json    ${resp.content}
+    ${id_task}=    Get From Dictionary    ${result}    id
+    ${revision}=     Get From Dictionary    ${result}    revision
+
+    &{params}=    Create Dictionary    revision=${revision}
+    ${link}=    Catenate  SEPARATOR=  ${API_TASKS_URL}    /    ${id_task}
+    ${resp}=    DELETE Request    wunderlist    ${link}     params=&{params}
+    Should Be Equal As Strings    ${resp.status_code}    204
+
+#############
+###Comments##
+#############
+
+Create Comment on task
+    Create Wunderlist Session
+    ${id_list}   ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Creating Comment Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    ${jsondata}=    To Json    ${resp.content}
+    ${id_task}=    Get From Dictionary    ${jsondata}    id
+
+    &{params}=    Create Dictionary    task_id=${id_task}    text=First Comment
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_COMMENTS}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    201
+
 
 
 #############
