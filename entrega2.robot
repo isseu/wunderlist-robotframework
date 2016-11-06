@@ -64,16 +64,54 @@ Get Completed Tasks From List
 Get Tasks From List
     Create Wunderlist Session
     ${id_list}    ${revision}     Get Any User List
+
+    # BASE CASE list_id = Con permiso
     &{params}=    Create Dictionary    list_id=${id_list}
     ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
     Should Be Equal As Strings    ${resp.status_code}    200
+
+    # 1) list_id no nos pertenece
     &{params}=    Create Dictionary    list_id=409233670
     ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
     Should Be Equal As Strings    ${resp.status_code}    404
+
+    # 2) list_id no es entero
     &{params}=    Create Dictionary    list_id=hola mundo
     ${resp}=    Get Request    wunderlist    ${API_TASKS_URL}    params=${params}
     Should Be Equal As Strings    ${resp.status_code}    500
 
+
+##############
+## Comments ##
+##############
+
+Create Comment on task
+    Create Wunderlist Session
+    ${id_list}    ${revision}     Get Any User List
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Creating Comment Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    ${jsondata}=    To Json    ${resp.content}
+    ${id_task}=    Get From Dictionary    ${jsondata}    id
+
+    # BASE CASE task_id accesible && text no vacio
+    &{params}=    Create Dictionary    task_id=${id_task}    text=First Comment
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_COMMENTS}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    201
+
+    # 1) task_id no accesible && text no vacio
+    &{params}=    Create Dictionary    task_id=409233670    text=First Comment
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_COMMENTS}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    400
+
+    # 1) task_id no es numero && text no vacio
+    &{params}=    Create Dictionary    task_id=hola    text=First Comment
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_COMMENTS}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    400
+
+    # 2) task_id accesible && text vacio
+    &{params}=    Create Dictionary    task_id=hola    text=
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_COMMENTS}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    400
 
 *** Keywords ***
 Create Wunderlist Session
