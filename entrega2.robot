@@ -31,6 +31,30 @@ ${API_REMINDERS_URL}      /api/v1/reminders
 ## Tasks ##
 ###########
 
+Post New Task
+    Create Wunderlist Session
+    ${id_list}    ${revision}     Get Any User List
+
+    # BASE CASE  ---> list_id=Existe Title = No Vacio
+    &{params}=    Create Dictionary    list_id=${id_list}    title=Testing Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    201
+
+    # 1) List_id= Pertenezca y Title = Vacio
+    &{params}=    Create Dictionary    list_id=${id_list}
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    400
+
+    # 2) List_id=String  y Title = No vacio
+    &{params}=    Create Dictionary    list_id=hola mundo    title=Testing Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    400
+
+    # 3) List_id=No Pertenezca  y Title = No vacio
+    &{params}=    Create Dictionary    list_id=409233670    title=Testing Task
+    ${resp}=    Post Request    wunderlist    ${API_TASKS_URL}    data=${params}
+    Should Be Equal As Strings    ${resp.status_code}    400
+
 Get Completed Tasks From List
     Create Wunderlist Session
     ${id_list}    ${revision}     Get Any User List

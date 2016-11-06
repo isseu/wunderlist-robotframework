@@ -112,7 +112,6 @@ Get Specific Task
     Dictionary Should Contain Key    ${jsondata}    revision
     Dictionary Should Contain Key    ${jsondata}    title
 
-
 Update a task
     Create Wunderlist Session
     ${id_list}    ${revision}     Get Any User List
